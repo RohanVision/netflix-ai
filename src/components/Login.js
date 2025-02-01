@@ -1,10 +1,15 @@
 import React, { useRef, useState } from 'react'
 import Header from './Header'
 import { checkValidate } from '../utlis/validate';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../utlis/firebase";
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+    const navigate = useNavigate();
     const [isSignIn, setIsSignIn] = useState();
     const [errors, setErrors] = useState({})
+    const name = useRef(null);
     const email = useRef(null);
     const password = useRef(null);
 
@@ -17,12 +22,48 @@ const Login = () => {
     const handleButtonClick = () => {
         // console.log(email.current.value)
         // console.log(Password.current.value)
-        const emailValue = email.current?.value || '';
-        const passwordValue = password.current?.value || '';
-
+        const emailValue = email.current?.value;
+        const passwordValue = password.current?.value;
         const validateMessage = checkValidate(emailValue, passwordValue)
 
-        setErrors(validateMessage);
+        // Check if there are validation errors
+        if (validateMessage && Object.keys(validateMessage).length > 0) {
+            setErrors(validateMessage);
+            return; // Stop execution if validation fails
+        }
+
+        setErrors({}); // Clear errors if validation passes
+
+        if (!isSignIn) {
+            // SignUp Logic
+            createUserWithEmailAndPassword(auth, emailValue, passwordValue)
+                .then((userCredential) => {
+                    // Signed up 
+                    const user = userCredential.user;
+                    console.log(user);
+                    navigate('/browse')
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    setErrors(errorCode + ' ' + errorMessage)
+                });
+
+        } else {
+            // SignIn
+            signInWithEmailAndPassword(auth, emailValue, passwordValue)
+                .then((userCredential) => {
+                    // Signed in 
+                    const user = userCredential.user;
+                    console.log(user)
+                    navigate('/browse')
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    setErrors(errorCode + " - " + errorMessage)
+                });
+        }
     }
 
     return (
@@ -36,7 +77,7 @@ const Login = () => {
                 <div className='absolute top-1/2 left-1/2 translate-top -translate-x-1/2 -translate-y-1/2 px-11 py-14 bg-black w-3/12 rounded-lg'>
                     <form className='flex flex-col text-white' onSubmit={(e) => { e.preventDefault() }}>
                         <h1 className='font-bold text-white text-3xl pb-4'>{isSignIn ? 'Sign In' : 'Sign Up'}</h1>
-                        {!isSignIn && <input className='px-4 py-4 my-4 outline-none bg-transparent rounded-md border border-gray-400' type="text" placeholder='Full Name' />}
+                        {!isSignIn && <input ref={name} className='px-4 py-4 my-4 outline-none bg-transparent rounded-md border border-gray-400' type="text" placeholder='Full Name' />}
 
                         <input ref={email} className='px-4 py-4 my-4 outline-none bg-transparent rounded-md border border-gray-400' type="text" placeholder='Email Address' />
                         <p className='text-red-600'>{errors.email}</p>
