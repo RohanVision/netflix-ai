@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+/firebase-tools-instant-win.exe
 
 # testing
 /coverage
