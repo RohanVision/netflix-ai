@@ -9,8 +9,8 @@ import { addUser, removeUser } from '../utlis/userSlice'
 import Home from './Home'
 
 const Body = () => {
-    const dispatch = useDispatch();
     const [isSignIn, setIsSignIn] = useState(true);
+    const dispatch = useDispatch();
     const appRouter = createBrowserRouter([
         {
             path: '/',
@@ -29,8 +29,15 @@ const Body = () => {
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                const { uid, email, displayName } = user
-                dispatch(addUser({ uid: uid, email: email, displayName: displayName }));
+                const { uid, email, displayName, photoURL } = user
+                dispatch(addUser(
+                    {
+                        uid: uid,
+                        email: email,
+                        displayName: displayName,
+                        photoURL: photoURL
+                    }
+                ));
             } else {
                 dispatch(removeUser());
             }

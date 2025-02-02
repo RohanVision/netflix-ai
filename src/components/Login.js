@@ -1,13 +1,16 @@
 import React, { useRef, useState } from 'react'
 import Header from './Header'
 import { checkValidate } from '../utlis/validate';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../utlis/firebase";
 import { useNavigate } from 'react-router-dom';
+import { addUser } from '../utlis/userSlice';
+import { useDispatch } from 'react-redux';
 
 const Login = ({ isSignIn, setIsSignIn }) => {
     const navigate = useNavigate();
-    const [errors, setErrors] = useState({})
+    const [errors, setErrors] = useState({});
+    const dispatch = useDispatch();
     const name = useRef(null);
     const email = useRef(null);
     const password = useRef(null);
@@ -39,8 +42,26 @@ const Login = ({ isSignIn, setIsSignIn }) => {
                 .then((userCredential) => {
                     // Signed up 
                     const user = userCredential.user;
-                    console.log(user);
-                    navigate('/browse')
+                    // Update As soon as Signup
+                    updateProfile(user, {
+                        displayName: name.current.value, photoURL: "https://i.pinimg.com/564x/1b/a2/e6/1ba2e6d1d4874546c70c91f1024e17fb.jpg"
+                    }).then(() => {
+                        // Profile updated!
+                        const { uid, email, displayName, photoURL } = auth.currentUser;
+                        dispatch(addUser(
+                            {
+                                uid: uid,
+                                email: email,
+                                displayName: displayName,
+                                photoURL: photoURL
+                            }
+                        ));
+                        navigate('/browse')
+                    }).catch((error) => {
+                        // An error occurred
+                        setErrors(validateMessage)
+                    });
+                    // Update As soon as Signup
                 })
                 .catch((error) => {
                     const errorCode = error.code;
