@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Login from './Login'
 import Browse from './Browse'
-import { createBrowserRouter, Link, RouterProvider, useNavigate } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '../utlis/firebase'
 import { useDispatch } from 'react-redux'
@@ -10,6 +10,7 @@ import Home from './Home'
 
 const Body = () => {
     const dispatch = useDispatch();
+    const [isSignIn, setIsSignIn] = useState(true);
     const appRouter = createBrowserRouter([
         {
             path: '/',
@@ -17,7 +18,7 @@ const Body = () => {
         },
         {
             path: '/login',
-            element: <Login />
+            element: <Login isSignIn={isSignIn} setIsSignIn={setIsSignIn} />
         },
         {
             path: '/browse',

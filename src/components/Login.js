@@ -5,18 +5,17 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "fire
 import { auth } from "../utlis/firebase";
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Login = ({ isSignIn, setIsSignIn }) => {
     const navigate = useNavigate();
-    const [isSignIn, setIsSignIn] = useState();
     const [errors, setErrors] = useState({})
     const name = useRef(null);
     const email = useRef(null);
     const password = useRef(null);
 
-    const toggleSignInForm = () => {
-        setIsSignIn(!isSignIn);
-        setErrors({});
-    }
+    // const toggleSignInForm = () => {
+    //     setIsSignIn(!isSignIn);
+    //     setErrors({});
+    // }
 
     // Login Validation
     const handleButtonClick = () => {
@@ -68,7 +67,7 @@ const Login = () => {
 
     return (
         <div>
-            <Header />
+            <Header isSignIn={isSignIn} setIsSignIn={setIsSignIn} />
             <div>
                 <div>
                     <img className='object-cover object-center w-full h-screen'
@@ -90,12 +89,10 @@ const Login = () => {
                         </button>
 
                         <p className='text-gray-400 pt-4'>{isSignIn ? 'New to Netflix?' : 'Aready Registerd'}
-                            <span onClick={toggleSignInForm} className='cursor-pointer font-bold text-white  text-md ml-1'>{isSignIn ? 'Sign Up now' : 'Sign In now'}</span>
+                            <span onClick={() => setIsSignIn(!isSignIn)} className='cursor-pointer font-bold text-white  text-md ml-1'>{isSignIn ? 'Sign Up now' : 'Sign In now'}</span>
                         </p>
                     </form>
                 </div>
-
-
             </div>
         </div >
 
