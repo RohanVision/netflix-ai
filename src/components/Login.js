@@ -6,6 +6,7 @@ import { auth } from "../utlis/firebase";
 import { useNavigate } from 'react-router-dom';
 import { addUser } from '../utlis/userSlice';
 import { useDispatch } from 'react-redux';
+import { BACKGROUND_IMG, USER_PHOTO } from '../utlis/constant';
 
 const Login = ({ isSignIn, setIsSignIn }) => {
     const navigate = useNavigate();
@@ -44,7 +45,8 @@ const Login = ({ isSignIn, setIsSignIn }) => {
                     const user = userCredential.user;
                     // Update As soon as Signup
                     updateProfile(user, {
-                        displayName: name.current.value, photoURL: "https://i.pinimg.com/564x/1b/a2/e6/1ba2e6d1d4874546c70c91f1024e17fb.jpg"
+                        displayName: name.current.value,
+                        photoURL: USER_PHOTO
                     }).then(() => {
                         // Profile updated!
                         const { uid, email, displayName, photoURL } = auth.currentUser;
@@ -56,7 +58,7 @@ const Login = ({ isSignIn, setIsSignIn }) => {
                                 photoURL: photoURL
                             }
                         ));
-                        navigate('/browse')
+                        navigate('/browse');
                     }).catch((error) => {
                         // An error occurred
                         setErrors(validateMessage)
@@ -75,8 +77,6 @@ const Login = ({ isSignIn, setIsSignIn }) => {
                 .then((userCredential) => {
                     // Signed in 
                     const user = userCredential.user;
-                    console.log(user)
-                    navigate('/browse')
                 })
                 .catch((error) => {
                     const errorCode = error.code;
@@ -92,7 +92,7 @@ const Login = ({ isSignIn, setIsSignIn }) => {
             <div>
                 <div>
                     <img className='object-cover object-center w-full h-screen'
-                        src="https://assets.nflxext.com/ffe/siteui/vlv3/7a8c0067-a424-4e04-85f8-9e25a49a86ed/web/CA-en-20250120-TRIFECTA-perspective_1ea750e2-25c0-4073-971e-5179e54d8b41_large.jpg" alt="bg-img" />
+                        src={BACKGROUND_IMG} alt="bg-img" />
                 </div>
                 <div className='absolute top-1/2 left-1/2 translate-top -translate-x-1/2 -translate-y-1/2 px-11 py-14 bg-black w-3/12 rounded-lg'>
                     <form className='flex flex-col text-white' onSubmit={(e) => { e.preventDefault() }}>

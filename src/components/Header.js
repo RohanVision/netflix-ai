@@ -1,27 +1,52 @@
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../utlis/firebase";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { addUser, removeUser } from "../utlis/userSlice";
+import { LOGO_URL } from "../utlis/constant";
 
 const Header = ({ isSignIn, setIsSignIn }) => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector(store => store.user)
     const handleSignOut = () => {
         signOut(auth).then(() => {
-            navigate('/');
         }).catch((error) => {
             navigate('/errorPage')
         });
     }
 
     const handleClick = () => {
-        setIsSignIn(!isSignIn)
+        setIsSignIn(!isSignIn);
     }
+
+    useEffect(() => {
+        const unubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const { uid, email, displayName, photoURL } = user
+                dispatch(addUser(
+                    {
+                        uid: uid,
+                        email: email,
+                        displayName: displayName,
+                        photoURL: photoURL
+                    })
+                );
+                navigate("/browse");
+            } else {
+                dispatch(removeUser());
+                navigate("/login");
+            }
+        });
+        return () => unubscribe();
+    }, [])
+
     return (
         <div className='absolute w-full px-52 py-2 bg-gradient-to-b from-black z-10'>
             <div className='flex items-center justify-between'>
                 <div>
-                    <img className='w-48' src="https://help.nflxext.com/helpcenter/OneTrust/oneTrust_production/consent/87b6a5c0-0104-4e96-a291-092c11350111/01938dc4-59b3-7b21-92dd-d4d4b93ad8a6/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png" alt="Netflix-logo" />
+                    <img className='w-48' src={LOGO_URL} alt="Netflix-logo" />
                 </div>
                 <div className="flex gap-2">
                     {!user && <button onClick={handleClick}
