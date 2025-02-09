@@ -43,7 +43,7 @@ const Header = ({ isSignIn, setIsSignIn }) => {
     }, [])
 
     return (
-        <div className='absolute w-full px-52 py-2 bg-gradient-to-b from-black z-10'>
+        <div className='absolute w-full px-52 py-2 bg-gradient-to-b from-black z-10 text-white'>
             <div className='flex items-center justify-between'>
                 <div>
                     <img className='w-48' src={LOGO_URL} alt="Netflix-logo" />
