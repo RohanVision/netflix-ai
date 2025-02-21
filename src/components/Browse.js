@@ -17,11 +17,12 @@ const Browse = () => {
         <div>
             <Header />
             {
-                showGptSearch ? <GptSearch /> : <>
-                    <MainContainer />
-                    <SecondaryContainer />
-                </>
-            }
+                showGptSearch ? <GptSearch /> : (
+                    <>
+                        <MainContainer />
+                        <SecondaryContainer />
+                    </>
+                )}
         </div>
     )
 }
